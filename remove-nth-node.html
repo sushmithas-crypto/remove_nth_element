@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Nth Node From End - Interactive Visualizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        select {
+            padding: 10px 15px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        select:hover {
+            border-color: #764ba2;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-play {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-play:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-next {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .visualization {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .linked-list {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .node-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .pointer-labels {
+            height: 30px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .pointer-label {
+            font-weight: 700;
+            font-size: 14px;
+            animation: bounce 1s infinite;
+        }
+
+        .slow-pointer {
+            color: #3182ce;
+        }
+
+        .fast-pointer {
+            color: #48bb78;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .node {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            transition: all 0.5s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .node.normal {
+            background: #4a5568;
+        }
+
+        .node.slow {
+            background: #3182ce;
+            transform: scale(1.15);
+            box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.3);
+        }
+
+        .node.fast {
+            background: #48bb78;
+            transform: scale(1.15);
+            box-shadow: 0 0 0 4px rgba(72, 187, 120, 0.3);
+        }
+
+        .node.removed {
+            opacity: 0.3;
+            background: #f56565;
+        }
+
+        .index-label {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .arrow {
+            font-size: 32px;
+            color: #a0aec0;
+            font-weight: bold;
+        }
+
+        .null-node {
+            width: 70px;
+            height: 70px;
+            border: 3px dashed #cbd5e0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #a0aec0;
+            font-weight: bold;
+        }
+
+        .explanation-box {
+            background: #edf2f7;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .explanation-box h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .explanation-box p {
+            color: #4a5568;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .legend {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .legend h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .legend-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 35px;
+            height: 35px;
+            border-radius: 6px;
+        }
+
+        .algorithm-box {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .algorithm-box h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .algorithm-box p {
+            color: #4a5568;
+            margin-bottom: 8px;
+            line-height: 1.8;
+        }
+
+        .complexity {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e2e8f0;
+            color: #718096;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Remove Nth Node From End</h1>
+        <p class="subtitle">Two-Pointer Technique Visualization</p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Remove from end:</label>
+                <select id="nSelector">
+                    <option value="1">n = 1</option>
+                    <option value="2" selected>n = 2</option>
+                    <option value="3">n = 3</option>
+                    <option value="4">n = 4</option>
+                    <option value="5">n = 5</option>
+                </select>
+            </div>
+            <button class="btn-play" id="playBtn">▶ Play</button>
+            <button class="btn-next" id="nextBtn">⏭ Next Step</button>
+            <button class="btn-reset" id="resetBtn">↻ Reset</button>
+        </div>
+
+        <div class="visualization">
+            <div class="linked-list" id="linkedList"></div>
+        </div>
+
+        <div class="explanation-box">
+            <h3 id="stepTitle">Step 1 of 5</h3>
+            <p id="explanation">Initialize two pointers. We'll use the two-pointer technique.</p>
+        </div>
+
+        <div class="legend">
+            <h3>Legend</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #3182ce;"></div>
+                    <span>Slow Pointer</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #48bb78;"></div>
+                    <span>Fast Pointer</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4a5568;"></div>
+                    <span>Normal Node</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f56565; opacity: 0.3;"></div>
+                    <span>Removed Node</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="algorithm-box">
+            <h3>Algorithm</h3>
+            <p>1. Create two pointers: fast and slow</p>
+            <p>2. Move fast pointer n steps ahead</p>
+            <p>3. Move both pointers until fast reaches the end</p>
+            <p>4. Slow pointer will be just before the node to remove</p>
+            <p>5. Skip the target node by updating the next pointer</p>
+            <p class="complexity">Time Complexity: O(L) | Space Complexity: O(1)</p>
+        </div>
+    </div>
+
+    <script>
+        let nodes = [1, 2, 3, 4, 5];
+        let n = 2;
+        let step = 0;
+        let isPlaying = false;
+        let completed = false;
+        let playInterval = null;
+
+        const steps = [
+            { fast: -1, slow: -1, text: "Initialize two pointers. We'll use the two-pointer technique." },
+            { fast: null, slow: -1, text: "Move fast pointer n steps ahead to create a gap of n nodes." },
+            { fast: null, slow: 0, text: "Now move both pointers together until fast reaches the end." },
+            { fast: null, slow: null, text: "Fast pointer reached the end. Slow pointer is now before the node to remove." },
+            { fast: -1, slow: -1, text: "Remove the node by skipping it in the linked list!" }
+        ];
+
+        const nSelector = document.getElementById('nSelector');
+        const playBtn = document.getElementById('playBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const linkedList = document.getElementById('linkedList');
+        const stepTitle = document.getElementById('stepTitle');
+        const explanation = document.getElementById('explanation');
+
+        function renderList() {
+            linkedList.innerHTML = '';
+            
+            const currentStep = steps[step];
+            let fastPos = currentStep.fast;
+            let slowPos = currentStep.slow;
+
+            // Calculate actual positions for step 1, 2, 3
+            if (step === 1) {
+                fastPos = n;
+            } else if (step === 2) {
+                fastPos = n;
+                slowPos = 0;
+            } else if (step === 3) {
+                fastPos = nodes.length;
+                slowPos = nodes.length - n;
+            }
+
+            nodes.forEach((value, index) => {
+                const nodeContainer = document.createElement('div');
+                nodeContainer.className = 'node-container';
+
+                // Pointer labels
+                const pointerLabels = document.createElement('div');
+                pointerLabels.className = 'pointer-labels';
+                
+                if (slowPos === index) {
+                    const slowLabel = document.createElement('span');
+                    slowLabel.className = 'pointer-label slow-pointer';
+                    slowLabel.textContent = 'Slow ↓';
+                    pointerLabels.appendChild(slowLabel);
+                }
+                
+                if (fastPos === index) {
+                    const fastLabel = document.createElement('span');
+                    fastLabel.className = 'pointer-label fast-pointer';
+                    fastLabel.textContent = 'Fast ↓';
+                    pointerLabels.appendChild(fastLabel);
+                }
+                
+                nodeContainer.appendChild(pointerLabels);
+
+                // Node
+                const node = document.createElement('div');
+                node.className = 'node normal';
+                
+                if (slowPos === index) {
+                    node.className = 'node slow';
+                } else if (fastPos === index) {
+                    node.className = 'node fast';
+                }
+                
+                if (completed && index === nodes.length - n) {
+                    node.className = 'node removed';
+                }
+                
+                node.textContent = value;
+                nodeContainer.appendChild(node);
+
+                // Index label
+                const indexLabel = document.createElement('div');
+                indexLabel.className = 'index-label';
+                indexLabel.textContent = `idx: ${index}`;
+                nodeContainer.appendChild(indexLabel);
+
+                linkedList.appendChild(nodeContainer);
+
+                // Arrow
+                if (index < nodes.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'arrow';
+                    arrow.textContent = '→';
+                    linkedList.appendChild(arrow);
+                }
+            });
+
+            // Null node
+            const nullContainer = document.createElement('div');
+            nullContainer.className = 'node-container';
+            
+            const nullPointerLabels = document.createElement('div');
+            nullPointerLabels.className = 'pointer-labels';
+            
+            if (fastPos === nodes.length) {
+                const fastLabel = document.createElement('span');
+                fastLabel.className = 'pointer-label fast-pointer';
+                fastLabel.textContent = 'Fast ↓';
+                nullPointerLabels.appendChild(fastLabel);
+            }
+            
+            nullContainer.appendChild(nullPointerLabels);
+            
+            const nullNode = document.createElement('div');
+            nullNode.className = 'null-node';
+            nullNode.textContent = 'null';
+            nullContainer.appendChild(nullNode);
+            
+            linkedList.appendChild(nullNode);
+        }
+
+        function updateUI() {
+            stepTitle.textContent = `Step ${step + 1} of ${steps.length}`;
+            explanation.textContent = steps[step].text;
+            renderList();
+            
+            playBtn.disabled = isPlaying;
+            nextBtn.disabled = isPlaying || completed;
+            nSelector.disabled = isPlaying;
+        }
+
+        function nextStep() {
+            if (step < steps.length - 1) {
+                step++;
+                updateUI();
+            } else if (!completed) {
+                // Remove the node
+                nodes.splice(nodes.length - n, 1);
+                completed = true;
+                updateUI();
+            }
+        }
+
+        function play() {
+            if (completed) {
+                reset();
+            }
+            
+            isPlaying = true;
+            playBtn.textContent = '⏸ Playing...';
+            updateUI();
+            
+            playInterval = setInterval(() => {
+                if (step < steps.length - 1) {
+                    nextStep();
+                } else if (!completed) {
+                    nextStep();
+                    stopPlaying();
+                } else {
+                    stopPlaying();
+                }
+            }, 2000);
+        }
+
+        function stopPlaying() {
+            isPlaying = false;
+            playBtn.textContent = completed ? '↻ Replay' : '▶ Play';
+            if (playInterval) {
+                clearInterval(playInterval);
+                playInterval = null;
+            }
+            updateUI();
+        }
+
+        function reset() {
+            stopPlaying();
+            nodes = [1, 2, 3, 4, 5];
+            step = 0;
+            completed = false;
+            playBtn.textContent = '▶ Play';
+            updateUI();
+        }
+
+        playBtn.addEventListener('click', play);
+        nextBtn.addEventListener('click', nextStep);
+        resetBtn.addEventListener('click', reset);
+        
+        nSelector.addEventListener('change', (e) => {
+            n = parseInt(e.target.value);
+            reset();
+        });
+
+        // Initial render
+        updateUI();
+    </script>
+</body>
+</html>
